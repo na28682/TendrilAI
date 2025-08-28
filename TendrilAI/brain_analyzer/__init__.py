@@ -49,7 +49,6 @@ class BrainAnalyzer:
         self.visualizer = BrainVisualizer()
         self.report_generator = ReportGenerator()
         
-        # Analysis results
         self.current_results = None
         
     def analyze_scan(self, 
@@ -71,20 +70,16 @@ class BrainAnalyzer:
         """
         print(f"🔍 Analyzing MRI scan: {scan_path}")
         
-        # Load and preprocess scan
         scan_data = self._load_scan(scan_path)
         
-        # Perform brain segmentation
         print("🧠 Performing brain segmentation...")
         segmentation_results = self.segmentation.segment_brain(scan_data)
         
-        # Detect abnormalities
         print("⚠️ Detecting abnormalities...")
         abnormality_results = self.abnormality_detector.detect_abnormalities(
             scan_data, segmentation_results
         )
         
-        # Create results object
         self.current_results = AnalysisResults(
             scan_path=scan_path,
             scan_data=scan_data,
@@ -92,21 +87,18 @@ class BrainAnalyzer:
             abnormality_results=abnormality_results
         )
         
-        # Generate visualizations if requested
         if generate_visualizations:
             print("📊 Generating visualizations...")
             self.current_results.visualizations = self.visualizer.create_visualizations(
                 self.current_results
             )
         
-        # Generate report if requested
         if generate_report:
             print("📝 Generating analysis report...")
             self.current_results.report = self.report_generator.generate_report(
                 self.current_results
             )
         
-        # Save results if output directory specified
         if output_dir:
             self._save_results(output_dir)
         
@@ -128,7 +120,6 @@ class BrainAnalyzer:
         if not scan_path.exists():
             raise FileNotFoundError(f"Scan file not found: {scan_path}")
         
-        # Load based on file extension
         if scan_path.suffix in ['.nii', '.nii.gz']:
             return self._load_nifti(scan_path)
         elif scan_path.suffix in ['.dcm', '.dicom']:
@@ -246,8 +237,6 @@ class AnalysisResults:
         """Generate analysis report."""
         return self.report
 
-
-# Convenience function for quick analysis
 def analyze_mri_scan(scan_path: Union[str, Path], 
                     output_dir: Optional[str] = None,
                     **kwargs) -> AnalysisResults:
@@ -265,8 +254,6 @@ def analyze_mri_scan(scan_path: Union[str, Path],
     analyzer = BrainAnalyzer(**kwargs)
     return analyzer.analyze_scan(scan_path, output_dir)
 
-
-# Version info
 __version__ = "1.0.0"
 __author__ = "TendrilAI Team"
 __email__ = "contact@tendrilai.com" 
